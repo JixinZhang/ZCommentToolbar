@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Launcher</key>
+	<string>20000001</string>
+	<key>Services</key>
+    <array>
+        <dict>
+            <key>class</key>
+            <string>MOnStartServiceImpl</string>
+            <key>lazyLoading</key>
+            <false/>
+            <key>name</key>
+            <string>MOnStartService</string>
+        </dict>
+        <dict>
+            <key>class</key>
+            <string>MDemoServiceImpl</string>
+            <key>lazyLoading</key>
+            <false/>
+            <key>name</key>
+            <string>MDemoService</string>
+        </dict>
+    </array>
+	<key>Applications</key>
+    <array>
+        <dict>
+            <key>delegate</key>
+            <string>MHomeAppDelegate</string>
+            <key>description</key>
+            <string>启动窗</string>
+            <key>name</key>
+            <string>20000001</string>
+        </dict>
+		<dict>
+			<key>delegate</key>
+			<string>MDemoAppDelegate</string>
+			<key>description</key>
+			<string>DemoApp</string>
+			<key>name</key>
+			<string>20000002</string>
+		</dict>
+    </array>
+</dict>
+</plist>
