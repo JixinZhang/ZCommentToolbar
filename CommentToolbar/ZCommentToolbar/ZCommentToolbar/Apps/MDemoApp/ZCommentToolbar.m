@@ -41,12 +41,9 @@
 @implementation ZCommentToolbar
 
 - (instancetype)init {
-    return [self initWithFrame:CGRectMake(0, kScreenHeight - kViewHeight + 64, kScreenWidth, kViewHeight)];
-}
-
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, kViewHeight)];
+    self = [super init];
     if (self) {
+        self.frame = CGRectMake(0, kScreenHeight - kViewHeight + 64, kScreenWidth, kViewHeight);
         [self setupCommentToolbarView];
         [self setupFrames];
     }
@@ -313,16 +310,15 @@
                          CGRect commentSendBtnFrame = CGRectMake(CGRectGetWidth(rightViewFrame) - kSendBtnWidth, CGRectGetMaxY(commentTextViewFrame) - kSendBtnHeight, kSendBtnWidth, kSendBtnHeight);
                          weakSelf.commentSendButton.frame = commentSendBtnFrame;
                      } completion:^(BOOL finished) {
-                         [weakSelf.commentToolbarBackBtn removeFromSuperview];
-                         [weakSelf.commentToolbarShareBtn removeFromSuperview];
-                         [weakSelf.commentToolbarCommentBtn removeFromSuperview];
-                         weakSelf.commentTextView.selectedRange = NSMakeRange(weakSelf.commentTextView.text.length, 0);
                          [UIView animateWithDuration:0.15
                                           animations:^{
                                               weakSelf.commentRightView.frame = rightViewFrame;
                                               weakSelf.commentToolbarShowBtn.center = CGPointMake((kLeftViewWidth / 2.0), (kViewHeight / 2.0));
                                           } completion:^(BOOL finished) {
-                                              
+                                              [weakSelf.commentToolbarBackBtn removeFromSuperview];
+                                              [weakSelf.commentToolbarShareBtn removeFromSuperview];
+                                              [weakSelf.commentToolbarCommentBtn removeFromSuperview];
+                                              weakSelf.commentTextView.selectedRange = NSMakeRange(weakSelf.commentTextView.text.length, 0);
                                           }];
                      }];
 }
