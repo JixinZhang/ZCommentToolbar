@@ -189,6 +189,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentToolBarKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
 
+#pragma mark - setup frames
+
 - (void)setupFrames {
     //left View frame
     CGRect leftViewFrame = CGRectMake(0, self.frame.size.height - kViewHeight, ((kScreenWidth - kRightGap) / 2.0), kViewHeight);
@@ -209,6 +211,8 @@
     CGRect commentTextViewFrame = CGRectMake(0, 0, rightViewFrame.size.width, rightViewFrame.size.height);
     self.commentTextView.frame = commentTextViewFrame;
 }
+
+#pragma mark - adjust subview frames
 
 - (void)changeSubviewsFrames {
     CGFloat textViewHeight = [self heightForTextViewWithText:self.commentTextView.text];
@@ -232,6 +236,8 @@
     CGRect commentSendBtnFrame = CGRectMake(CGRectGetWidth(newRightViewFrame) - kSendBtnWidth, CGRectGetMaxY(commentTextViewFrame) - kSendBtnHeight, kSendBtnWidth, kSendBtnHeight);
     self.commentSendButton.frame = commentSendBtnFrame;
 }
+
+#pragma mark - get height for UITextView
 
 - (CGFloat)heightForTextViewWithText:(NSString *)text {
     CGFloat fixedWidth = self.commentTextView.contentSize.width;
@@ -370,6 +376,8 @@
                                           }];
                      }];
 }
+
+#pragma mark - create toolbar item
 
 - (UIView *)toolBarItem:(NSString *) title tag:(NSUInteger) tag action:(SEL) action {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
