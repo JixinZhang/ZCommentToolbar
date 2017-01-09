@@ -36,7 +36,7 @@ typedef NS_ENUM(NSInteger, ZCommentToolbarAction) {
 
 @property (nonatomic, strong) UITextView *commentTextView;
 /**
- 占位文案，通过set方法赋值
+ placeholder，通过set方法赋值
  */
 @property (nonatomic, copy) NSString *commentPlaceholder;
 

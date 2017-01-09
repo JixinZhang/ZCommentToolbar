@@ -45,7 +45,7 @@
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
+    self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, kViewHeight)];
     if (self) {
         [self setupCommentToolbarView];
         [self setupFrames];
@@ -317,10 +317,9 @@
                          [weakSelf.commentToolbarShareBtn removeFromSuperview];
                          [weakSelf.commentToolbarCommentBtn removeFromSuperview];
                          weakSelf.commentTextView.selectedRange = NSMakeRange(weakSelf.commentTextView.text.length, 0);
-                         [UIView animateWithDuration:0.1
+                         [UIView animateWithDuration:0.15
                                           animations:^{
                                               weakSelf.commentRightView.frame = rightViewFrame;
-                                              weakSelf.commentTextView.frame = commentTextViewFrame;
                                               weakSelf.commentToolbarShowBtn.center = CGPointMake((kLeftViewWidth / 2.0), (kViewHeight / 2.0));
                                           } completion:^(BOOL finished) {
                                               
@@ -348,9 +347,31 @@
                         options:(self.keyboardAnimationCurve << 16)
                      animations:^{
                          weakSelf.frame = viewFrame;
-                         [weakSelf setupFrames];
-                     } completion:^(BOOL finished) {
+                         //left View frame
+                         CGRect leftViewFrame = CGRectMake(0, self.frame.size.height - kViewHeight, ((kScreenWidth - kRightGap) / 2.0), kViewHeight);
+                         self.commentLeftView.frame = leftViewFrame;
                          
+                         CGFloat leftGap = 33 + 4;
+                         CGFloat leftViewBtnWidth = _commentToolbarBackBtn.frame.size.width;
+                         self.commentToolbarBackBtn.center = CGPointMake(leftViewBtnWidth * 0 + leftGap , (kViewHeight / 2.0));
+                         self.commentToolbarShareBtn.center = CGPointMake(leftViewBtnWidth * 1 + leftGap, (kViewHeight / 2.0));
+                         self.commentToolbarCommentBtn.center = CGPointMake(leftViewBtnWidth * 2 + leftGap, (kViewHeight / 2.0));
+                         self.commentToolbarShowBtn.center = CGPointMake(leftViewBtnWidth * 4 + leftGap, (kViewHeight / 2.0));
+                         
+                         self.rightViewEdgInsets = UIEdgeInsetsMake(7, 0, 7, 0);
+                         //right view frame
+                         CGRect rightViewFrame = CGRectMake(((kScreenWidth - kRightGap) / 2.0) + 4, self.rightViewEdgInsets.top, ((kScreenWidth - kRightGap) / 2.0) - 4, self.frame.size.height - self.rightViewEdgInsets.top - self.rightViewEdgInsets.bottom);
+                         self.commentRightView.frame = rightViewFrame;
+                         //UITextView frame
+                         CGRect commentTextViewFrame = CGRectMake(0, 0, rightViewFrame.size.width, rightViewFrame.size.height);
+                         self.commentTextView.frame = commentTextViewFrame;
+                     } completion:^(BOOL finished) {
+                         [UIView animateWithDuration:0.15
+                                          animations:^{
+                                              [weakSelf setupFrames];
+                                          } completion:^(BOOL finished) {
+                                              
+                                          }];
                      }];
 }
 
