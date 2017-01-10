@@ -310,9 +310,9 @@
                          weakSelf.commentLeftView.frame = leftViewFrame;
                          weakSelf.commentRightView.frame = rightViewFrame;
                          weakSelf.commentTextView.frame = commentTextViewFrame;
-                         weakSelf.commentToolbarBackBtn.center = CGPointMake(-50, (kViewHeight / 2.0));
-                         weakSelf.commentToolbarShareBtn.center = CGPointMake(-50, (kViewHeight / 2.0));
-                         weakSelf.commentToolbarCommentBtn.center = CGPointMake(-50, (kViewHeight / 2.0));
+                         weakSelf.commentToolbarBackBtn.center = CGPointMake(-118, (kViewHeight / 2.0));
+                         weakSelf.commentToolbarShareBtn.center = CGPointMake(-74, (kViewHeight / 2.0));
+                         weakSelf.commentToolbarCommentBtn.center = CGPointMake(-30, (kViewHeight / 2.0));
                          weakSelf.commentToolbarShowBtn.center = CGPointMake((kLeftViewWidth / 2.0), (kViewHeight / 2.0));
                          [weakSelf.commentLeftView addSubview:weakSelf.commentToolbarShowBtn];
                          CGRect commentSendBtnFrame = CGRectMake(CGRectGetWidth(rightViewFrame) - kSendBtnWidth, CGRectGetMaxY(commentTextViewFrame) - kSendBtnHeight, kSendBtnWidth, kSendBtnHeight);
