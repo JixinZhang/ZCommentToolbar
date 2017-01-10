@@ -32,11 +32,20 @@
 
 - (void) m_configViews {
     //配置视图
-//    self.edgesForExtendedLayout = UIRectEdgeNone;
-//    self.automaticallyAdjustsScrollViewInsets = NO;
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, -300, KScreenWidth, KScreenHeight - 64)];
+    imageView.image = [UIImage imageNamed:@"LaunchImage"];
+    [self.view addSubview:imageView];
+    
+    UISwitch *nightModel = [[UISwitch alloc] initWithFrame:CGRectMake(0, 20, 40, 30)];
+    [nightModel addTarget:self action:@selector(switchAction:) forControlEvents:UIControlEventValueChanged];
+    [nightModel setOn:NO];
+    [self.view addSubview:nightModel];
+    
     [self.view addSubview:self.commentToolbar];
     self.commentToolbar.commentCount = 20;
 }
+
 
 - (void) m_configEvents {
     //配置事件
@@ -49,7 +58,14 @@
 
 #pragma mark -- Action
 
-
+- (IBAction)switchAction:(id)sender {
+    UISwitch *switchBtn = (UISwitch*)sender;
+    if ([switchBtn isOn]) {
+        [self.commentToolbar commentToolbarAdjustStyleWithNightModel:YES];
+    } else {
+        [self.commentToolbar commentToolbarAdjustStyleWithNightModel:NO];
+    }
+}
 
 #pragma mark -- Getter
 

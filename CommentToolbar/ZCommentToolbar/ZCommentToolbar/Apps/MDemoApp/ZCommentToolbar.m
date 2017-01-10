@@ -20,6 +20,9 @@
 
 @interface ZCommentToolbar()<UITextViewDelegate>
 
+@property (nonatomic, strong) UIView *panelView;
+@property (nonatomic, strong) UIView *maskView;
+
 @property (nonatomic, strong) UIView *topLineView;
 @property (nonatomic, strong) UIButton *commentSendButton;
 @property (nonatomic, strong) UIView *commentRightView;
@@ -52,6 +55,25 @@
 
 #pragma mark - Getter
 
+- (UIView *)panelView {
+    if (!_panelView) {
+        _panelView = [[UIView alloc] init];
+        _panelView.backgroundColor = [UIColor whiteColor];
+        _panelView.tag = 1001;
+    }
+    return _panelView;
+}
+
+- (UIView *)maskView {
+    if (!_maskView) {
+        _maskView = [[UIView alloc] initWithFrame:CGRectMake(0, -KScreenHeight, KScreenWidth, 2 * KScreenHeight)];
+        _maskView.backgroundColor = [UIColor clearColor];
+        _maskView.tag = 1000;
+        [_maskView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(commentToolbarShowBtnClicked:)]];
+    }
+    return _maskView;
+}
+
 - (UITextView *)commentTextView {
     if (!_commentTextView) {
         NSTextStorage* textStorage = [[NSTextStorage alloc] init];
@@ -60,7 +82,6 @@
         NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:self.bounds.size];
         [layoutManager addTextContainer:textContainer];
         
-//        _commentTextView = [[UITextView alloc] initWithFrame:CGRectZero textContainer:textContainer];
         _commentTextView = [[UITextView alloc] initWithFrame:CGRectZero];
         _commentTextView.backgroundColor = [UIColor clearColor];
         _commentTextView.delegate = self;
@@ -88,6 +109,7 @@
     if (!_commentRightView) {
         _commentRightView = [[UIView alloc] initWithFrame:CGRectZero];
         _commentRightView.backgroundColor = [UIColor whiteColor];
+        _commentRightView.tag = 1002;
         _commentRightView.layer.borderWidth = 1.0f;
         _commentRightView.layer.borderColor = [UIColor colorWithRed:202/255.0 green:203/255.0 blue:204/255.0 alpha:1].CGColor;
     }
@@ -98,6 +120,7 @@
     if (!_commentLeftView) {
         _commentLeftView = [[UIView alloc] initWithFrame:CGRectZero];
         _commentLeftView.backgroundColor = [UIColor clearColor];
+        _commentLeftView.tag = 1003;
     }
     return _commentLeftView;
 }
@@ -106,6 +129,7 @@
     if (!_topLineView) {
         _topLineView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 1)];
         _topLineView.backgroundColor = [UIColor colorWithRed:202/255.0 green:203/255.0 blue:204/255.0 alpha:1];
+        _topLineView.tag = 1004;
     }
     return _topLineView;
 }
@@ -153,28 +177,30 @@
 - (UIView *)setupCommentItemView {
     UIView *commentItemView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
     commentItemView.backgroundColor = [UIColor clearColor];
-    [commentItemView addSubview:[self toolBarItem:@"\U0000e621" tag:102 action:@selector(commentToolbarCommentBtnClicked:)]];
+    [commentItemView addSubview:[self toolBarItem:@"\U0000e621" tag:1007 action:@selector(commentToolbarCommentBtnClicked:)]];
     return commentItemView;
 }
 
 - (void)setupCommentToolbarView {
     //commentToolbarView
-    self.backgroundColor = [UIColor whiteColor];
+    self.backgroundColor = [UIColor clearColor];
     self.autoresizesSubviews = YES;
     self.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     self.userInteractionEnabled = YES;
     self.multipleTouchEnabled = NO;
-    [self addSubview:self.topLineView];
+    
+    [self addSubview:self.panelView];
+    [self.panelView addSubview:self.topLineView];
     
     //left view
-    self.commentToolbarBackBtn = [self toolBarItem:@"\U0000e61f" tag:100 action:@selector(commentToolbarBackBtnClicked:)];
-    self.commentToolbarShareBtn = [self toolBarItem:@"\U0000e620" tag:101 action:@selector(commentToolbarShareBtnClicked:)];
+    self.commentToolbarBackBtn = [self toolBarItem:@"\U0000e61f" tag:1005 action:@selector(commentToolbarBackBtnClicked:)];
+    self.commentToolbarShareBtn = [self toolBarItem:@"\U0000e620" tag:1006 action:@selector(commentToolbarShareBtnClicked:)];
     self.commentToolbarCommentBtn = [self setupCommentItemView];
-    self.commentToolbarShowBtn = [self toolBarItem:@"\U0000e60c" tag:103 action:@selector(commentToolbarShowBtnClicked:)];
+    self.commentToolbarShowBtn = [self toolBarItem:@"\U0000e60c" tag:1008 action:@selector(commentToolbarShowBtnClicked:)];
     [self.commentLeftView addSubview:self.commentToolbarBackBtn];
     [self.commentLeftView addSubview:self.commentToolbarShareBtn];
     [self.commentLeftView addSubview:self.commentToolbarCommentBtn];
-    [self addSubview:self.commentLeftView];
+    [self.panelView addSubview:self.commentLeftView];
     
     //right View
     [self.commentTextView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth) | UIViewAutoresizingFlexibleBottomMargin];
@@ -183,7 +209,7 @@
     [self.commentTextView setTextColor:[UIColor lightGrayColor]];
     [self.commentRightView addSubview:self.commentTextView];
     [self.commentRightView addSubview:self.commentSendButton];
-    [self addSubview:self.commentRightView];
+    [self.panelView addSubview:self.commentRightView];
     self.commentPlaceholder = @"添加评论";
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentToolBarKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -193,6 +219,8 @@
 #pragma mark - setup frames
 
 - (void)setupFrames {
+    self.panelView.frame = CGRectMake(0, 0, KScreenWidth, kViewHeight);
+    
     //left View frame
     CGRect leftViewFrame = CGRectMake(0, self.frame.size.height - kViewHeight, ((kScreenWidth - kRightGap) / 2.0), kViewHeight);
     self.commentLeftView.frame = leftViewFrame;
@@ -218,17 +246,17 @@
 - (void)changeSubviewsFrames {
     CGFloat textViewHeight = [self heightForTextViewWithText:self.commentTextView.text];
     textViewHeight = MAX(textViewHeight, kTextViewHeight);
-    CGFloat viewHeight = textViewHeight + self.rightViewEdgInsets.top + self.rightViewEdgInsets.bottom;
-    self.frame = CGRectMake(0, kScreenHeight - self.keyboardHeight - viewHeight, kScreenWidth, viewHeight);
+    CGFloat panelViewHeight = textViewHeight + self.rightViewEdgInsets.top + self.rightViewEdgInsets.bottom;
+    self.panelView.frame = CGRectMake(0, self.frame.size.height - panelViewHeight, kScreenWidth, panelViewHeight);
     
     //layout left view frame
     CGRect newLeftViewFrame = self.commentLeftView.frame;
-    newLeftViewFrame.origin.y = self.frame.size.height - kViewHeight;
+    newLeftViewFrame.origin.y = self.panelView.frame.size.height - kViewHeight;
     self.commentLeftView.frame = newLeftViewFrame;
     
     //layout right view frame
     CGRect newRightViewFrame = self.commentRightView.frame;
-    newRightViewFrame.size.height = self.frame.size.height - self.rightViewEdgInsets.top - self.rightViewEdgInsets.bottom;
+    newRightViewFrame.size.height = self.panelView.frame.size.height - self.rightViewEdgInsets.top - self.rightViewEdgInsets.bottom;
     self.commentRightView.frame = newRightViewFrame;
     //UITextView frame
     CGRect commentTextViewFrame = CGRectMake(0, 0, newRightViewFrame.size.width, newRightViewFrame.size.height);
@@ -283,30 +311,35 @@
     //获取键盘弹出的时间曲线
     self.keyboardAnimationCurve = [[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
     
+    CGRect viewFrame = CGRectMake(0, 0, KScreenWidth, KScreenHeight - self.keyboardHeight - 64);
+    
     CGFloat textViewHeight = [self heightForTextViewWithText:self.commentTextView.text];
     textViewHeight = MAX(textViewHeight, kTextViewHeight);
-    CGRect viewFrame = self.frame;
-    viewFrame.size.height = textViewHeight + self.rightViewEdgInsets.top + self.rightViewEdgInsets.bottom;
-    viewFrame.origin.y = kScreenHeight - self.keyboardHeight - viewFrame.size.height;
+    CGRect panelViewFrame = self.frame;
+    panelViewFrame.size.height = textViewHeight + self.rightViewEdgInsets.top + self.rightViewEdgInsets.bottom;
+    panelViewFrame.origin.y = viewFrame.size.height - panelViewFrame.size.height;
     
     CGRect leftViewFrame = self.commentLeftView.frame;
-    leftViewFrame.origin.y = viewFrame.size.height - kViewHeight;
+    leftViewFrame.origin.y = panelViewFrame.size.height - kViewHeight;
     leftViewFrame.size.width = kLeftViewWidth;
     
     CGRect rightViewFrame = self.commentRightView.frame;
     rightViewFrame.origin.x = kLeftViewWidth;
     rightViewFrame.size.width = kScreenWidth - kRightGap - kLeftViewWidth;
-    rightViewFrame.size.height = viewFrame.size.height - self.rightViewEdgInsets.top - self.rightViewEdgInsets.bottom;
+    rightViewFrame.size.height = panelViewFrame.size.height - self.rightViewEdgInsets.top - self.rightViewEdgInsets.bottom;
 
     CGRect commentTextViewFrame = CGRectMake(0, 0, rightViewFrame.size.width, rightViewFrame.size.height);
     
     self.commentTextView.textContainerInset = UIEdgeInsetsMake(8, 0, 0, kSendBtnWidth);
+    
+    [self insertSubview:self.maskView belowSubview:self.panelView];
     __weak typeof (self)weakSelf = self;
     [UIView animateWithDuration:self.keyboardAnimationDuration
                           delay:0
                         options:(self.keyboardAnimationCurve << 16)
                      animations:^{
                          weakSelf.frame = viewFrame;
+                         weakSelf.panelView.frame = panelViewFrame;
                          weakSelf.commentLeftView.frame = leftViewFrame;
                          weakSelf.commentRightView.frame = rightViewFrame;
                          weakSelf.commentTextView.frame = commentTextViewFrame;
@@ -317,6 +350,8 @@
                          [weakSelf.commentLeftView addSubview:weakSelf.commentToolbarShowBtn];
                          CGRect commentSendBtnFrame = CGRectMake(CGRectGetWidth(rightViewFrame) - kSendBtnWidth, CGRectGetMaxY(commentTextViewFrame) - kSendBtnHeight, kSendBtnWidth, kSendBtnHeight);
                          weakSelf.commentSendButton.frame = commentSendBtnFrame;
+                         weakSelf.maskView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.3];
+                         weakSelf.maskView.frame = CGRectMake(0, -KScreenHeight, KScreenWidth, 2 * KScreenHeight - panelViewFrame.size.height - weakSelf.keyboardHeight - 64);
                      } completion:^(BOOL finished) {
                          [weakSelf.commentToolbarBackBtn removeFromSuperview];
                          [weakSelf.commentToolbarShareBtn removeFromSuperview];
@@ -410,10 +445,40 @@
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
                          [weakSelf.commentToolbarShowBtn removeFromSuperview];
+                         weakSelf.maskView.backgroundColor = [UIColor clearColor];
                      } completion:^(BOOL finished) {
                          [weakSelf.commentTextView setScrollEnabled:YES];
+                         [weakSelf.maskView removeFromSuperview];
                      }];
     [self.commentTextView resignFirstResponder];
+}
+
+#pragma mark - touch to dismiss keyboard
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    UITouch *touch = [[event allTouches] anyObject];
+    UIView *touchView = [touch view];
+    if (touchView.tag == 1000) {
+        [self commentToolbarShowBtnClicked:touch];
+        NSLog(@"touch");
+    }
+}
+
+#pragma mark - change style 
+
+- (void)commentToolbarAdjustStyleWithNightModel:(BOOL)nightModel {
+    if (nightModel) {
+        //夜间模式 26,32,38
+        self.panelView.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:38/255.0 alpha:1];
+        self.commentRightView.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:38/255.0 alpha:1];
+        self.commentRightView.layer.borderColor = [UIColor colorWithRed:20/255.0 green:20/255.0 blue:209/255.0 alpha:1].CGColor;
+    } else {
+        //白天模式
+        self.panelView.backgroundColor = [UIColor whiteColor];
+        self.commentRightView.backgroundColor = [UIColor whiteColor];
+        self.commentRightView.layer.borderColor = [UIColor colorWithRed:202/255.0 green:203/255.0 blue:204/255.0 alpha:1].CGColor;
+
+    }
 }
 
 @end

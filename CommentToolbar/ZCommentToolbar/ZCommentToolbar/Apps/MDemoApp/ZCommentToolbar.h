@@ -52,4 +52,11 @@ typedef NS_ENUM(NSInteger, ZCommentToolbarAction) {
  */
 @property (nonatomic, assign) NSUInteger commentCount;
 
+/**
+ 更换commentToolbar的颜色
+
+ @param nightModel 是否为夜间模式
+ */
+- (void)commentToolbarAdjustStyleWithNightModel:(BOOL)nightModel;
+
 @end
