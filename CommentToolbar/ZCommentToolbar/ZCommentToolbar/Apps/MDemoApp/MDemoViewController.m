@@ -42,6 +42,11 @@
     [nightModel setOn:NO];
     [self.view addSubview:nightModel];
     
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(60, 20, 100, 30)];
+    label.text = @"夜间模式";
+    label.textColor = [UIColor blackColor];
+    [self.view addSubview:label];
+    
     [self.view addSubview:self.commentToolbar];
     self.commentToolbar.commentCount = 20;
 }

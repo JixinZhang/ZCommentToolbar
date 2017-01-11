@@ -284,7 +284,7 @@
     CGFloat fixedWidth = self.commentTextView.contentSize.width;
     CGSize newSize = [text boundingRectWithSize:CGSizeMake(fixedWidth, CGFLOAT_MAX)
                                                             options:NSStringDrawingUsesLineFragmentOrigin
-                                                         attributes:@{NSFontAttributeName:self.commentTextView.font}
+                                                         attributes:self.attributes
                                                             context:nil].size;
     return MIN(newSize.height, 120);
 }
