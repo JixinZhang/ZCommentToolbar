@@ -80,13 +80,15 @@
 
 - (UITextView *)commentTextView {
     if (!_commentTextView) {
-        NSTextStorage* textStorage = [[NSTextStorage alloc] init];
+        NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:self.commentRightView.frame.size];
+        
         NSLayoutManager* layoutManager = [NSLayoutManager new];
-        [textStorage addLayoutManager:layoutManager];
-        NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:self.bounds.size];
         [layoutManager addTextContainer:textContainer];
         
-        _commentTextView = [[UITextView alloc] initWithFrame:CGRectZero];
+        NSTextStorage* textStorage = [[NSTextStorage alloc] init];
+        [textStorage addLayoutManager:layoutManager];
+        
+        _commentTextView = [[UITextView alloc] initWithFrame:CGRectZero textContainer:textContainer];
         _commentTextView.backgroundColor = [UIColor clearColor];
         _commentTextView.delegate = self;
     }
@@ -220,7 +222,7 @@
     //设置TextView的字体格式
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.lineSpacing = 4;// 字体的行间距
-    self.attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:18.0f],
+    self.attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:16.0f],
                                  NSParagraphStyleAttributeName:paragraphStyle};
 
     //添加键盘通知
@@ -283,7 +285,7 @@
 - (CGFloat)heightForTextViewWithText:(NSString *)text {
     CGFloat fixedWidth = self.commentTextView.contentSize.width;
     CGSize newSize = [text boundingRectWithSize:CGSizeMake(fixedWidth, CGFLOAT_MAX)
-                                                            options:NSStringDrawingUsesLineFragmentOrigin
+                                                            options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading)
                                                          attributes:self.attributes
                                                             context:nil].size;
     return MIN(newSize.height, 120);
@@ -300,7 +302,10 @@
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
-    [self changeSubviewsFrames];
+    [UIView animateWithDuration:0.15 animations:^{
+        [self changeSubviewsFrames];
+    }];
+    NSRange range = textView.selectedRange;
     NSString *content = [textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if ([content isEqualToString:self.commentPlaceholder] ||
         content.length == 0) {
@@ -310,6 +315,11 @@
         self.commentTextView.textColor = self.textColor;
     }
     textView.attributedText = [[NSAttributedString alloc] initWithString:textView.text attributes:self.attributes];
+    textView.selectedRange = range;
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    NSLog(@"结束编辑");
 }
 
 #pragma mark - show/hide keyboard
@@ -473,7 +483,6 @@
     UIView *touchView = [touch view];
     if (touchView.tag == 1000) {
         [self commentToolbarShowBtnClicked:touch];
-        NSLog(@"touch");
     }
 }
 
