@@ -18,6 +18,8 @@
 #define kSendBtnWidth 34.0f
 #define kSendBtnHeight 34.0f
 
+#define kPlaceholderColor [UIColor lightGrayColor]
+
 @interface ZCommentToolbar()<UITextViewDelegate>
 
 @property (nonatomic, strong) UIView *panelView;
@@ -38,6 +40,8 @@
 @property (nonatomic, assign) CGFloat keyboardHeight;
 @property (nonatomic, assign) CGFloat keyboardAnimationDuration;
 @property (nonatomic, assign) NSInteger keyboardAnimationCurve;
+@property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, strong) NSDictionary *attributes;
 
 @end
 
@@ -196,7 +200,7 @@
     self.commentToolbarBackBtn = [self toolBarItem:@"\U0000e61f" tag:1005 action:@selector(commentToolbarBackBtnClicked:)];
     self.commentToolbarShareBtn = [self toolBarItem:@"\U0000e620" tag:1006 action:@selector(commentToolbarShareBtnClicked:)];
     self.commentToolbarCommentBtn = [self setupCommentItemView];
-    self.commentToolbarShowBtn = [self toolBarItem:@"\U0000e60c" tag:1008 action:@selector(commentToolbarShowBtnClicked:)];
+    self.commentToolbarShowBtn = [self toolBarItem:@"\U0000e617" tag:1008 action:@selector(commentToolbarShowBtnClicked:)];
     [self.commentLeftView addSubview:self.commentToolbarBackBtn];
     [self.commentLeftView addSubview:self.commentToolbarShareBtn];
     [self.commentLeftView addSubview:self.commentToolbarCommentBtn];
@@ -206,12 +210,20 @@
     [self.commentTextView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth) | UIViewAutoresizingFlexibleBottomMargin];
     [self.commentTextView setShowsHorizontalScrollIndicator:NO];
     [self.commentTextView setFont:[UIFont systemFontOfSize:14.0f]];
-    [self.commentTextView setTextColor:[UIColor lightGrayColor]];
+    [self.commentTextView setTextColor:kPlaceholderColor];
     [self.commentRightView addSubview:self.commentTextView];
     [self.commentRightView addSubview:self.commentSendButton];
     [self.panelView addSubview:self.commentRightView];
     self.commentPlaceholder = @"添加评论";
+    self.textColor = [UIColor blackColor];
     
+    //设置TextView的字体格式
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineSpacing = 4;// 字体的行间距
+    self.attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:18.0f],
+                                 NSParagraphStyleAttributeName:paragraphStyle};
+
+    //添加键盘通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentToolBarKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentToolBarKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
@@ -270,7 +282,7 @@
 
 - (CGFloat)heightForTextViewWithText:(NSString *)text {
     CGFloat fixedWidth = self.commentTextView.contentSize.width;
-    CGSize newSize = [self.commentTextView.text boundingRectWithSize:CGSizeMake(fixedWidth, CGFLOAT_MAX)
+    CGSize newSize = [text boundingRectWithSize:CGSizeMake(fixedWidth, CGFLOAT_MAX)
                                                             options:NSStringDrawingUsesLineFragmentOrigin
                                                          attributes:@{NSFontAttributeName:self.commentTextView.font}
                                                             context:nil].size;
@@ -282,7 +294,7 @@
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     if ([textView.text isEqualToString:self.commentPlaceholder]) {
         textView.text = @"";
-        textView.textColor = [UIColor blackColor];
+        textView.textColor = self.textColor;
         [self.commentSendButton setEnabled:NO];
     }
 }
@@ -295,8 +307,9 @@
         [self.commentSendButton setEnabled:NO];
     } else {
         [self.commentSendButton setEnabled:YES];
-        self.commentTextView.textColor = [UIColor blackColor];
+        self.commentTextView.textColor = self.textColor;
     }
+    textView.attributedText = [[NSAttributedString alloc] initWithString:textView.text attributes:self.attributes];
 }
 
 #pragma mark - show/hide keyboard
@@ -468,16 +481,21 @@
 
 - (void)commentToolbarAdjustStyleWithNightModel:(BOOL)nightModel {
     if (nightModel) {
-        //夜间模式 26,32,38
+        //夜间模式
         self.panelView.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:38/255.0 alpha:1];
         self.commentRightView.backgroundColor = [UIColor colorWithRed:26/255.0 green:32/255.0 blue:38/255.0 alpha:1];
-        self.commentRightView.layer.borderColor = [UIColor colorWithRed:20/255.0 green:20/255.0 blue:209/255.0 alpha:1].CGColor;
+        self.commentRightView.layer.borderColor = [UIColor colorWithRed:216/255.0 green:216/255.0 blue:216/255.0 alpha:1].CGColor;
+        self.textColor = [UIColor whiteColor];
     } else {
         //白天模式
         self.panelView.backgroundColor = [UIColor whiteColor];
         self.commentRightView.backgroundColor = [UIColor whiteColor];
         self.commentRightView.layer.borderColor = [UIColor colorWithRed:202/255.0 green:203/255.0 blue:204/255.0 alpha:1].CGColor;
-
+        self.textColor = [UIColor blackColor];
+    }
+    
+    if (![self.commentTextView.textColor isEqual:kPlaceholderColor]) {
+        self.commentTextView.textColor = self.textColor;
     }
 }
 

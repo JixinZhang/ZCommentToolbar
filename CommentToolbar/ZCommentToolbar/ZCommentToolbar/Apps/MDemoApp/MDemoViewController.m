@@ -73,7 +73,7 @@
     if (!_commentToolbar) {
         _commentToolbar = [[ZCommentToolbar alloc] init];
         _commentToolbar.delegate = self;
-        _commentToolbar.commentPlaceholder = @"wirte something";
+        _commentToolbar.commentPlaceholder = @"write something";
     }
     return _commentToolbar;
 }
