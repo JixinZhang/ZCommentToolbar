@@ -271,10 +271,10 @@
     //layout right view frame
     CGRect newRightViewFrame = self.commentRightView.frame;
     newRightViewFrame.size.height = self.panelView.frame.size.height - self.rightViewEdgInsets.top - self.rightViewEdgInsets.bottom;
-    self.commentRightView.frame = newRightViewFrame;
     //UITextView frame
     CGRect commentTextViewFrame = CGRectMake(0, 0, newRightViewFrame.size.width, newRightViewFrame.size.height);
     self.commentTextView.frame = commentTextViewFrame;
+    self.commentRightView.frame = newRightViewFrame;
     
     CGRect commentSendBtnFrame = CGRectMake(CGRectGetWidth(newRightViewFrame) - kSendBtnWidth, CGRectGetMaxY(commentTextViewFrame) - kSendBtnHeight, kSendBtnWidth, kSendBtnHeight);
     self.commentSendButton.frame = commentSendBtnFrame;
@@ -283,12 +283,13 @@
 #pragma mark - get height for UITextView
 
 - (CGFloat)heightForTextViewWithText:(NSString *)text {
-    CGFloat fixedWidth = self.commentTextView.contentSize.width;
-    CGSize newSize = [text boundingRectWithSize:CGSizeMake(fixedWidth, CGFLOAT_MAX)
+    CGFloat fixedWidth = self.commentTextView.frame.size.width - self.commentTextView.textContainerInset.right - 6;
+    CGSize newSize = [text boundingRectWithSize:CGSizeMake(fixedWidth, MAXFLOAT)
                                                             options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading)
                                                          attributes:self.attributes
                                                             context:nil].size;
-    return MIN(newSize.height, 120);
+    NSLog(@"%.3f",newSize.height);
+    return MIN(newSize.height, 112);
 }
 
 #pragma mark - UITextView Delegate
@@ -305,7 +306,6 @@
     [UIView animateWithDuration:0.15 animations:^{
         [self changeSubviewsFrames];
     }];
-    NSRange range = textView.selectedRange;
     NSString *content = [textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if ([content isEqualToString:self.commentPlaceholder] ||
         content.length == 0) {
@@ -314,12 +314,13 @@
         [self.commentSendButton setEnabled:YES];
         self.commentTextView.textColor = self.textColor;
     }
-    textView.attributedText = [[NSAttributedString alloc] initWithString:textView.text attributes:self.attributes];
-    textView.selectedRange = range;
-}
-
-- (void)textViewDidEndEditing:(UITextView *)textView {
-    NSLog(@"结束编辑");
+    // 判断是否有候选字符，如果不为nil，代表有候选字符
+    if(textView.markedTextRange == nil){
+        NSRange range = textView.selectedRange;
+        textView.attributedText = [[NSAttributedString alloc] initWithString:textView.text attributes:self.attributes];
+        textView.selectedRange = range;
+    }
+    NSLog(@"textView.contentOffset = (%.f,%.f)",textView.contentOffset.x,textView.contentOffset.y);
 }
 
 #pragma mark - show/hide keyboard
