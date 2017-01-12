@@ -98,6 +98,7 @@
 - (UIButton *)commentSendButton {
     if (!_commentSendButton) {
         _commentSendButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _commentSendButton.backgroundColor = [UIColor clearColor];
         _commentSendButton.center = CGPointMake(kScreenWidth, kSendBtnHeight / 2.0);
         _commentSendButton.enabled = NO;
         [_commentSendButton setTitle:@"发送" forState:UIControlStateNormal];
@@ -258,6 +259,7 @@
 #pragma mark - adjust subview frames
 
 - (void)changeSubviewsFrames {
+    CGFloat oldPanelViewHeight = self.panelView.frame.size.height;
     CGFloat textViewHeight = [self heightForTextViewWithText:self.commentTextView.text];
     textViewHeight = MAX(textViewHeight, kTextViewHeight);
     CGFloat panelViewHeight = textViewHeight + self.rightViewEdgInsets.top + self.rightViewEdgInsets.bottom;
@@ -278,6 +280,19 @@
     
     CGRect commentSendBtnFrame = CGRectMake(CGRectGetWidth(newRightViewFrame) - kSendBtnWidth, CGRectGetMaxY(commentTextViewFrame) - kSendBtnHeight, kSendBtnWidth, kSendBtnHeight);
     self.commentSendButton.frame = commentSendBtnFrame;
+    
+    self.maskView.frame = CGRectMake(0, -KScreenHeight, KScreenWidth, 2 * KScreenHeight - panelViewHeight - self.keyboardHeight - 64);
+    
+    if (oldPanelViewHeight != panelViewHeight &&
+        oldPanelViewHeight <= panelViewHeight) {
+        [self scrollTextViewToBottom];
+    }
+}
+
+- (void)scrollTextViewToBottom {
+    //滑动到底部
+    CGPoint offset = CGPointMake(0, self.commentTextView.contentSize.height - self.commentTextView.frame.size.height);
+    [self.commentTextView setContentOffset:offset animated:NO];
 }
 
 #pragma mark - get height for UITextView
@@ -288,7 +303,6 @@
                                                             options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading)
                                                          attributes:self.attributes
                                                             context:nil].size;
-    NSLog(@"%.3f",newSize.height);
     return MIN(newSize.height, 112);
 }
 
@@ -320,7 +334,7 @@
         textView.attributedText = [[NSAttributedString alloc] initWithString:textView.text attributes:self.attributes];
         textView.selectedRange = range;
     }
-    NSLog(@"textView.contentOffset = (%.f,%.f)",textView.contentOffset.x,textView.contentOffset.y);
+    textView.textColor = self.textColor;
 }
 
 #pragma mark - show/hide keyboard
@@ -372,7 +386,7 @@
                          weakSelf.commentToolbarCommentBtn.center = CGPointMake(-30, (kViewHeight / 2.0));
                          weakSelf.commentToolbarShowBtn.center = CGPointMake((kLeftViewWidth / 2.0), (kViewHeight / 2.0));
                          [weakSelf.commentLeftView addSubview:weakSelf.commentToolbarShowBtn];
-                         CGRect commentSendBtnFrame = CGRectMake(CGRectGetWidth(rightViewFrame) - kSendBtnWidth, CGRectGetMaxY(commentTextViewFrame) - kSendBtnHeight, kSendBtnWidth, kSendBtnHeight);
+                         CGRect commentSendBtnFrame = CGRectMake(CGRectGetMaxX(commentTextViewFrame) - kSendBtnWidth, CGRectGetMaxY(commentTextViewFrame) - kSendBtnHeight, kSendBtnWidth, kSendBtnHeight);
                          weakSelf.commentSendButton.frame = commentSendBtnFrame;
                          weakSelf.maskView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.3];
                          weakSelf.maskView.frame = CGRectMake(0, -KScreenHeight, KScreenWidth, 2 * KScreenHeight - panelViewFrame.size.height - weakSelf.keyboardHeight - 64);
