@@ -314,6 +314,7 @@
         textView.textColor = self.textColor;
         [self.commentSendButton setEnabled:NO];
     }
+    [self scrollTextViewToBottom];
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
