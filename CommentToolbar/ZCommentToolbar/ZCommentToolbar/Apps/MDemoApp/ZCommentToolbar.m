@@ -403,9 +403,9 @@
     //获取键盘的高度
     NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
     self.keyboardHeight = [aValue CGRectValue].size.height;
-    //获取键盘弹出的时间
+    //获取键盘收起的时间
     self.keyboardAnimationDuration = [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    //获取键盘弹出的时间曲线
+    //获取键盘收起的时间曲线
     self.keyboardAnimationCurve = [[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
     
     CGRect viewFrame = self.frame;
@@ -413,6 +413,11 @@
     viewFrame.size.height = kViewHeight;
     
     self.commentTextView.textContainerInset = UIEdgeInsetsMake(8, 0, 0, 0);
+    [self.commentLeftView addSubview:self.commentToolbarBackBtn];
+    [self.commentLeftView addSubview:self.commentToolbarShareBtn];
+    [self.commentLeftView addSubview:self.commentToolbarCommentBtn];
+    [self.commentTextView setContentOffset:CGPointZero animated:NO];
+    [self.commentTextView setScrollEnabled:NO];
     __weak typeof (self)weakSelf = self;
     [UIView animateWithDuration:self.keyboardAnimationDuration
                           delay:0
@@ -420,9 +425,13 @@
                      animations:^{
                          weakSelf.frame = viewFrame;
                          [weakSelf setupFrames];
+                         [weakSelf.commentToolbarShowBtn removeFromSuperview];
+                         weakSelf.maskView.backgroundColor = [UIColor clearColor];
                      } completion:^(BOOL finished) {
-                         
-                     }];}
+                         [weakSelf.commentTextView setScrollEnabled:YES];
+                         [weakSelf.maskView removeFromSuperview];
+                     }];
+}
 
 #pragma mark - create toolbar item
 
@@ -470,24 +479,6 @@
 }
 
 - (IBAction)commentToolbarShowBtnClicked:(id)sender {
-    [self.commentLeftView addSubview:self.commentToolbarBackBtn];
-    [self.commentLeftView addSubview:self.commentToolbarShareBtn];
-    [self.commentLeftView addSubview:self.commentToolbarCommentBtn];
-    [self.commentTextView setScrollEnabled:NO];
-    CGRect viewFrame = self.frame;
-    viewFrame.origin.y = kScreenHeight - kViewHeight;
-    viewFrame.size.height = kViewHeight;
-    __weak typeof (self)weakSelf = self;
-    [UIView animateWithDuration:0.25
-                          delay:0
-                        options:UIViewAnimationOptionCurveEaseInOut
-                     animations:^{
-                         [weakSelf.commentToolbarShowBtn removeFromSuperview];
-                         weakSelf.maskView.backgroundColor = [UIColor clearColor];
-                     } completion:^(BOOL finished) {
-                         [weakSelf.commentTextView setScrollEnabled:YES];
-                         [weakSelf.maskView removeFromSuperview];
-                     }];
     [self.commentTextView resignFirstResponder];
 }
 

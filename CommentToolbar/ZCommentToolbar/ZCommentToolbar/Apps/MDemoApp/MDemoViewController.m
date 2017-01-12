@@ -37,14 +37,15 @@
     imageView.image = [UIImage imageNamed:@"LaunchImage"];
     [self.view addSubview:imageView];
     
-    UISwitch *nightModel = [[UISwitch alloc] initWithFrame:CGRectMake(0, 20, 40, 30)];
+    UISwitch *nightModel = [[UISwitch alloc] initWithFrame:CGRectMake(KScreenWidth - 100 - 50, 20, 40, 30)];
     [nightModel addTarget:self action:@selector(switchAction:) forControlEvents:UIControlEventValueChanged];
     [nightModel setOn:NO];
     [self.view addSubview:nightModel];
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(60, 20, 100, 30)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(KScreenWidth - 100, 20, 100, 30)];
     label.text = @"夜间模式";
     label.textColor = [UIColor blackColor];
+    label.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:label];
     
     [self.view addSubview:self.commentToolbar];
