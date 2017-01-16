@@ -49,7 +49,7 @@
     [self.view addSubview:label];
     
     [self.view addSubview:self.commentToolbar];
-    self.commentToolbar.commentCount = 20;
+    self.commentToolbar.commentCount = 0;
 }
 
 

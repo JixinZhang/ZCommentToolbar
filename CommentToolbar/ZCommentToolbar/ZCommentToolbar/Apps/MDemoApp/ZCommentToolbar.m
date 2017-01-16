@@ -150,6 +150,9 @@
 
 - (void)setCommentCount:(NSUInteger)commentCount {
     _commentCount = commentCount;
+    if (commentCount <= 0) {
+        return;
+    }
     UILabel *commentCountLabel = [self.commentToolbarCommentBtn viewWithTag:104];
     if (!commentCountLabel) {
         commentCountLabel = [[UILabel alloc] init];
