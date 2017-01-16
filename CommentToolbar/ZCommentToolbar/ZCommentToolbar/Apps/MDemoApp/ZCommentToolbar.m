@@ -314,7 +314,14 @@
         textView.textColor = self.textColor;
         [self.commentSendButton setEnabled:NO];
     }
-    [self scrollTextViewToBottom];
+    CGFloat oldPanelViewHeight = self.panelView.frame.size.height;
+    CGFloat textViewHeight = [self heightForTextViewWithText:self.commentTextView.text];
+    textViewHeight = MAX(textViewHeight, kTextViewHeight);
+    CGFloat panelViewHeight = textViewHeight + self.rightViewEdgInsets.top + self.rightViewEdgInsets.bottom;
+    if (oldPanelViewHeight != panelViewHeight &&
+        oldPanelViewHeight <= panelViewHeight) {
+        [self scrollTextViewToBottom];
+    }
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
