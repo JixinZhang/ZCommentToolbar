@@ -11,11 +11,11 @@
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
 #define kScreenHeight [UIScreen mainScreen].bounds.size.height - 64
 
-#define kRightGap 15.0f
-#define kLeftViewWidth 60.0f
+#define kRightGap 16.5f
+#define kLeftViewWidth 62.5f
 #define kViewHeight 48.0f
 #define kTextViewHeight 34.0f
-#define kSendBtnWidth 34.0f
+#define kSendBtnWidth 54.0f
 #define kSendBtnHeight 34.0f
 
 #define kPlaceholderColor [UIColor lightGrayColor]
@@ -102,8 +102,8 @@
         _commentSendButton.center = CGPointMake(kScreenWidth, kSendBtnHeight / 2.0);
         _commentSendButton.enabled = NO;
         [_commentSendButton setTitle:@"发送" forState:UIControlStateNormal];
-        [_commentSendButton.titleLabel setFont:[UIFont systemFontOfSize:12]];
-        [_commentSendButton setTitleColor:[UIColor colorWithRed:0/255.0 green:100/255.0 blue:199/255.0 alpha:1] forState:UIControlStateNormal];
+        [_commentSendButton.titleLabel setFont:[UIFont systemFontOfSize:12.0f]];
+        [_commentSendButton setTitleColor:[UIColor colorWithRed:20/255.0 green:120/255.0 blue:240/255.0 alpha:1] forState:UIControlStateNormal];
         [_commentSendButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
         [_commentSendButton addTarget:self
                                action:@selector(commentSendButtonClicked:)
@@ -135,7 +135,7 @@
 - (UIView *)topLineView {
     if (!_topLineView) {
         _topLineView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 1)];
-        _topLineView.backgroundColor = [UIColor colorWithRed:202/255.0 green:203/255.0 blue:204/255.0 alpha:1];
+        _topLineView.backgroundColor = [UIColor colorWithRed:203/255.0 green:203/255.0 blue:203/255.0 alpha:1];
         _topLineView.tag = 1004;
     }
     return _topLineView;
@@ -218,12 +218,12 @@
     [self.commentRightView addSubview:self.commentSendButton];
     [self.panelView addSubview:self.commentRightView];
     self.commentPlaceholder = @"添加评论";
-    self.textColor = [UIColor blackColor];
+    self.textColor = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1];
     
     //设置TextView的字体格式
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.lineSpacing = 4;// 字体的行间距
-    self.attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:16.0f],
+    self.attributes = @{NSFontAttributeName:[UIFont fontWithName:@"PingFangSC-Regular" size:12.0f],
                                  NSParagraphStyleAttributeName:paragraphStyle};
 
     //添加键盘通知
@@ -240,10 +240,10 @@
     CGRect leftViewFrame = CGRectMake(0, self.frame.size.height - kViewHeight, ((kScreenWidth - kRightGap) / 2.0), kViewHeight);
     self.commentLeftView.frame = leftViewFrame;
     
-    CGFloat leftGap = 33;
+    CGFloat leftGap = 44;
     CGFloat leftViewBtnWidth = _commentToolbarBackBtn.frame.size.width;
-    self.commentToolbarBackBtn.center = CGPointMake(leftViewBtnWidth * 0 + leftGap , (kViewHeight / 2.0));
-    self.commentToolbarShareBtn.center = CGPointMake(leftViewBtnWidth * 1 + leftGap, (kViewHeight / 2.0));
+    self.commentToolbarBackBtn.center = CGPointMake(leftViewBtnWidth * 0 + leftGap - 15, (kViewHeight / 2.0));
+    self.commentToolbarShareBtn.center = CGPointMake(leftViewBtnWidth * 1 + leftGap - 4, (kViewHeight / 2.0));
     self.commentToolbarCommentBtn.center = CGPointMake(leftViewBtnWidth * 2 + leftGap, (kViewHeight / 2.0));
     self.commentToolbarShowBtn.center = CGPointMake(leftViewBtnWidth * 4 + leftGap, (kViewHeight / 2.0));
     
@@ -452,7 +452,7 @@
     label.text = title;
     label.tag = 100;
     label.textAlignment = NSTextAlignmentCenter;
-    label.font = [UIFont fontWithName:@"iconfont" size:16];
+    label.font = [UIFont fontWithName:@"iconfont" size:20];
     [view addSubview:label];
     
     view.tag = tag;
@@ -514,7 +514,7 @@
         self.panelView.backgroundColor = [UIColor whiteColor];
         self.commentRightView.backgroundColor = [UIColor whiteColor];
         self.commentRightView.layer.borderColor = [UIColor colorWithRed:202/255.0 green:203/255.0 blue:204/255.0 alpha:1].CGColor;
-        self.textColor = [UIColor blackColor];
+        self.textColor = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1];
     }
     
     if (![self.commentTextView.textColor isEqual:kPlaceholderColor]) {
